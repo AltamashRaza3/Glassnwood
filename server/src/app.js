@@ -14,6 +14,9 @@ import productRoutes from "./routes/products.routes.js";
 
 
 const app = express();
+// Trust Vercel's reverse proxy
+app.set("trust proxy", 1);
+
 const configuredOrigins = (process.env.CLIENT_ORIGINS || '')
   .split(',').map((origin) => origin.trim()).filter(Boolean);
 const allowedOrigins = new Set(configuredOrigins);

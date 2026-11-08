@@ -147,49 +147,6 @@ export const services = [
 export const instagram = {
   profile: business.instagram,
   handle: "@glassnwood.in",
-  posts: [
-    {
-      url: "https://www.instagram.com/glassnwood.in/reel/DfAFxwaiiTh/",
-      type: "reel",
-      videoUrl: "",
-      thumbnail: "",
-    },
-    {
-      url: "https://www.instagram.com/glassnwood.in/reel/DfMuTeOgm89/",
-      type: "reel",
-      videoUrl: "",
-      thumbnail: "",
-    },
-    {
-      url: "https://www.instagram.com/glassnwood.in/reel/DaH4I7KCgnM/",
-      type: "reel",
-      videoUrl: "",
-      thumbnail: "",
-    },
-    {
-      url: "https://www.instagram.com/glassnwood.in/reel/DeG0_bAS1jd/",
-      type: "reel",
-      videoUrl: "",
-      thumbnail: "",
-    },
-    {
-      url: "https://www.instagram.com/glassnwood.in/reel/De1N7b9C4nF/",
-      type: "reel",
-      videoUrl: "",
-      thumbnail: "",
-    },
-    {
-      url: "https://www.instagram.com/glassnwood.in/reel/De675WpyjlN/",
-      type: "reel",
-      videoUrl: "",
-      thumbnail: "",
-    },
-    {
-      url: "https://www.instagram.com/glassnwood.in/reel/DfHqYGnCBRs/",
-      type: "reel",
-      videoUrl: "",
-      thumbnail: "",
-    },
-  ],
+  
 };
 
