@@ -1,0 +1,28 @@
+{
+  "name": "glass-n-wood-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "check": "node --check src/server.js && node --check src/app.js && node --check src/config/db.js && node --check src/middleware/errorHandler.js && node --check src/models/Enquiry.js && node --check src/models/Project.js && node --check src/routes/health.routes.js && node --check src/routes/projects.routes.js && node --check src/routes/enquiries.routes.js && node --check src/routes/instagram.routes.js && node --check src/scripts/seedProjects.js",
+    "seed:projects": "node src/scripts/seedProjects.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.11.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "2.8.5",
+    "dotenv": "16.4.7",
+    "express": "4.21.2",
+    "express-rate-limit": "7.5.0",
+    "helmet": "8.0.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "8.9.5",
+    "multer": "^2.5.0"
+  }
+}

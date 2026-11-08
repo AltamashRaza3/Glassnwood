@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  body {
+    @apply bg-paper text-charcoal font-sans antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-serif font-normal tracking-tight;
+  }
+  :focus-visible {
+    outline: 2px solid #1aa7b5;
+    outline-offset: 3px;
+  }
+}
+@layer components {
+  .wrap {
+    @apply mx-auto w-full max-w-7xl px-5 md:px-10;
+  }
+  .eyebrow {
+    @apply text-xs uppercase tracking-[.25em] text-wood;
+  }
+  .btn {
+  @apply inline-flex items-center gap-2 px-6 py-3 text-sm tracking-wide transition;
+  background-color: var(--color-woodn);
+  color: #24211e;
+}
+
+.btn:hover {
+  background-color: #ffffff;
+  color: #24211e;
+}
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 border border-current px-6 py-3 text-sm tracking-wide transition hover:bg-charcoal hover:text-paper;
+  }
+  .field {
+    @apply w-full border border-charcoal/25 bg-transparent px-4 py-3 text-sm focus:border-cyan;
+  }
+}

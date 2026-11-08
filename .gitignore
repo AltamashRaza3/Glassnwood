@@ -1,0 +1,122 @@
+
+# ==========================================
+# Dependencies
+# ==========================================
+node_modules/
+**/node_modules/
+
+# ==========================================
+# Build output
+# ==========================================
+dist/
+**/dist/
+build/
+**/build/
+
+# ==========================================
+# Environment variables and secrets
+# ==========================================
+.env
+.env.*
+!.env.example
+
+server/.env
+server/.env.*
+!server/.env.example
+
+# ==========================================
+# Logs
+# ==========================================
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# ==========================================
+# Runtime and temporary files
+# ==========================================
+*.pid
+*.seed
+*.tmp
+*.swp
+.temp/
+.cache/
+coverage/
+
+# ==========================================
+# IDE and editor
+# ==========================================
+.vscode/
+.idea/
+*.suo
+*.user
+
+# ==========================================
+# Operating system
+# ==========================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==========================================
+# Deployment and local configuration
+# ==========================================
+.vercel/
+.netlify/
+```
+
+## Important decisions based on your structure
+
+| Folder/file | Git decision |
+|---|---|
+| `src/` | Keep |
+| `public/` | Keep |
+| `server/src/` | Keep |
+| `server/scripts/` | Keep |
+| `server/package.json` | Keep |
+| `server/package-lock.json` | Keep |
+| Root `package.json` | Keep |
+| Both `.env` files | Ignore |
+| `node_modules/` | Ignore |
+| `dist/` | Ignore |
+| `public/robots.txt` | Keep |
+| `public/sitemap.xml` | Keep |
+| `src/assets/images/` | Keep |
+
+**One important note:** Your `server/scripts/` and `server/src/scripts/` contain migration and seeding scripts. Keep these in Git because they are useful for future database maintenance.
+
+## Before pushing to GitHub
+
+Run these commands from the project root:
+
+```powershell
+git status
+git check-ignore -v .env server/.env
+```
+
+Then check whether either environment file was already tracked:
+
+```powershell
+git ls-files .env server/.env
+```
+
+If either appears in the output, remove it from Git tracking (without deleting your local file):
+
+```powershell
+git rm --cached .env
+git rm --cached server/.env
+```
+
+Finally:
+
+```powershell
+git add .
+git status
+```
+
+Review the staged files before committing.
+
+# ==========================================
+# One-time migration utilities
+# ==========================================
+server/scripts/import-projects.js
