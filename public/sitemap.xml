@@ -1,9 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://www.glassnwood.in/</loc></url>
-  <url><loc>https://www.glassnwood.in/projects</loc></url>
-  <url><loc>https://www.glassnwood.in/services</loc></url>
-  <url><loc>https://www.glassnwood.in/about</loc></url>
-  <url><loc>https://www.glassnwood.in/contact</loc></url>
-  <url><loc>https://www.glassnwood.in/privacy</loc></url>
+
+  <url>
+    <loc>https://www.glassnwood.in/</loc>
+  </url>
+
+  <url>
+    <loc>https://www.glassnwood.in/projects</loc>
+  </url>
+
+  <url>
+    <loc>https://www.glassnwood.in/services</loc>
+  </url>
+
+  <url>
+    <loc>https://www.glassnwood.in/about</loc>
+  </url>
+
+  <url>
+    <loc>https://www.glassnwood.in/gallery</loc>
+  </url>
+
+  <url>
+    <loc>https://www.glassnwood.in/products/glass-mirrors</loc>
+  </url>
+
+  <url>
+    <loc>https://www.glassnwood.in/contact</loc>
+  </url>
+
+  <url>
+    <loc>https://www.glassnwood.in/privacy</loc>
+  </url>
+
+  <url>
+    <loc>https://www.glassnwood.in/terms</loc>
+  </url>
+
 </urlset>
