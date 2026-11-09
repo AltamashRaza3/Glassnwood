@@ -30,11 +30,14 @@ const uploadProjectImages = multer({
   },
 });
 
-export async function uploadBufferToCloudinary(file) {
+export async function uploadBufferToCloudinary(
+  file,
+  folder = "glass-n-wood/projects"
+) {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
-        folder: "glass-n-wood/projects",
+        folder,
         resource_type: "image",
         transformation: [
           { width: 2000, height: 2000, crop: "limit" },

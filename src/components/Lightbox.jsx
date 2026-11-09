@@ -1,23 +1,55 @@
 import { useEffect } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
-export default function Lightbox({ images, index, onClose, onIndex }) {
-  const n = images.length,
-    go = (d) => onIndex((index + d + n) % n);
+
+export default function Lightbox({ images = [], index = 0, onClose, onIndex }) {
+  const total = images.length;
+
+  const go = (direction) => {
+    if (total <= 1) return;
+
+    onIndex((index + direction + total) % total);
+  };
+
   useEffect(() => {
-    const k = (e) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") go(1);
-      if (e.key === "ArrowLeft") go(-1);
+    if (!total) return;
+
+    const previousOverflow = document.body.style.overflow;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        go(1);
+      }
+
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        go(-1);
+      }
     };
-    window.addEventListener("keydown", k);
+
     document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
     return () => {
-      window.removeEventListener("keydown", k);
-      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
     };
-  });
-  const b = "absolute p-3 text-white hover:text-cyan";
-  const im = images[index];
+  }, [index, total, onClose, onIndex]);
+
+  if (!total) return null;
+
+  const currentIndex = Math.min(Math.max(index, 0), total - 1);
+  const image = images[currentIndex];
+
+  if (!image?.src) return null;
+
+  const buttonClass =
+    "absolute z-10 rounded-full p-3 text-white transition-colors hover:text-cyan focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan";
+
   return (
     <div
       role="dialog"
@@ -26,47 +58,66 @@ export default function Lightbox({ images, index, onClose, onIndex }) {
       className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/95 p-4"
       onClick={onClose}
     >
+      {/* Close */}
       <button
+        type="button"
         autoFocus
         aria-label="Close gallery"
-        onClick={onClose}
-        className={`${b} right-3 top-3`}
-      >
-        <X />
-      </button>
-      <button
-        aria-label="Previous image"
-        onClick={(e) => {
-          e.stopPropagation();
-          go(-1);
+        onClick={(event) => {
+          event.stopPropagation();
+          onClose();
         }}
-        className={`${b} left-2`}
+        className={`${buttonClass} right-3 top-3`}
       >
-        <ChevronLeft size={36} />
+        <X size={28} />
       </button>
+
+      {/* Previous */}
+      {total > 1 && (
+        <button
+          type="button"
+          aria-label="Previous image"
+          onClick={(event) => {
+            event.stopPropagation();
+            go(-1);
+          }}
+          className={`${buttonClass} left-2`}
+        >
+          <ChevronLeft size={36} />
+        </button>
+      )}
+
+      {/* Image */}
       <figure
-        onClick={(e) => e.stopPropagation()}
+        onClick={(event) => event.stopPropagation()}
         className="max-h-full max-w-5xl"
       >
         <img
-          src={im.src}
-          alt={im.alt}
+          src={image.src}
+          alt={image.alt || "Project image"}
+          draggable="false"
           className="max-h-[80vh] w-full object-contain"
         />
+
         <figcaption className="mt-3 text-center text-sm text-white/70">
-          {im.alt} · {index + 1}/{n}
+          {image.alt || "Project image"} · {currentIndex + 1}/{total}
         </figcaption>
       </figure>
-      <button
-        aria-label="Next image"
-        onClick={(e) => {
-          e.stopPropagation();
-          go(1);
-        }}
-        className={`${b} right-2`}
-      >
-        <ChevronRight size={36} />
-      </button>
+
+      {/* Next */}
+      {total > 1 && (
+        <button
+          type="button"
+          aria-label="Next image"
+          onClick={(event) => {
+            event.stopPropagation();
+            go(1);
+          }}
+          className={`${buttonClass} right-2`}
+        >
+          <ChevronRight size={36} />
+        </button>
+      )}
     </div>
   );
 }

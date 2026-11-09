@@ -11,6 +11,8 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import productRoutes from "./routes/products.routes.js";
+import galleryRoutes from "./routes/gallery.routes.js";
+
 
 
 const app = express();
@@ -54,6 +56,7 @@ app.use('/api/projects', projectRoutes);
 app.use("/api/products", productRoutes);
 app.use('/api/enquiries', enquiryRoutes);
 app.use("/api/instagram", instagramRoutes);
+app.use("/api/gallery", galleryRoutes);
 app.use(notFound);
 app.use(errorHandler);
 

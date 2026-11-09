@@ -5,10 +5,12 @@ import { getProjects } from "../services/projectService";
 
 export default function Gallery() {
   const [projects, setProjects] = useState([]);
+  const [standaloneImages, setStandaloneImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeImage, setActiveImage] = useState(null);
 
+  // Fetch project images and standalone admin gallery images
   useEffect(() => {
     let cancelled = false;
 
@@ -17,11 +19,29 @@ export default function Gallery() {
         setLoading(true);
         setError("");
 
-        const result = await getProjects();
-        const items = Array.isArray(result) ? result : (result?.data ?? []);
+        const [projectResult, galleryResponse] = await Promise.all([
+          getProjects(),
+          fetch("/api/gallery"),
+        ]);
+
+        if (!galleryResponse.ok) {
+          throw new Error("Unable to load standalone gallery images.");
+        }
+
+        const galleryResult = await galleryResponse.json();
+
+        const projectItems = Array.isArray(projectResult)
+          ? projectResult
+          : (projectResult?.data ?? []);
+
+        const uploadedItems = galleryResult?.images ?? [];
 
         if (!cancelled) {
-          setProjects(items.filter((project) => project.published !== false));
+          setProjects(
+            projectItems.filter((project) => project.published !== false),
+          );
+
+          setStandaloneImages(uploadedItems.filter((image) => image?.src));
         }
       } catch (err) {
         if (!cancelled) {
@@ -39,8 +59,8 @@ export default function Gallery() {
     };
   }, []);
 
-  // Use gallery images only. The cover image is intentionally excluded.
-  const galleryImages = useMemo(
+  // Existing project gallery images
+  const projectImages = useMemo(
     () =>
       projects.flatMap((project) =>
         (Array.isArray(project.gallery) ? project.gallery : [])
@@ -50,17 +70,35 @@ export default function Gallery() {
             alt:
               image.alt || `${project.title || "Project"} image ${index + 1}`,
             title: project.title || "Glass n Wood",
-            key: `${project.slug || project._id}-${index}-${image.src}`,
+            key: `project-${project.slug || project._id}-${index}-${image.src}`,
           })),
       ),
     [projects],
+  );
+
+  // Images uploaded through Admin Gallery
+  const adminImages = useMemo(
+    () =>
+      standaloneImages.map((image) => ({
+        src: image.src,
+        alt: image.alt || "Glass n Wood gallery image",
+        title: "Glass n Wood",
+        key: `admin-${image._id || image.publicId || image.src}`,
+      })),
+    [standaloneImages],
+  );
+
+  // Combine both image sources
+  const galleryImages = useMemo(
+    () => [...adminImages, ...projectImages],
+    [adminImages, projectImages],
   );
 
   const closeLightbox = useCallback(() => setActiveImage(null), []);
 
   const showPrevious = useCallback(() => {
     setActiveImage((current) =>
-      current === null
+      current === null || galleryImages.length === 0
         ? null
         : (current - 1 + galleryImages.length) % galleryImages.length,
     );
@@ -68,7 +106,9 @@ export default function Gallery() {
 
   const showNext = useCallback(() => {
     setActiveImage((current) =>
-      current === null ? null : (current + 1) % galleryImages.length,
+      current === null || galleryImages.length === 0
+        ? null
+        : (current + 1) % galleryImages.length,
     );
   }, [galleryImages.length]);
 
@@ -98,6 +138,7 @@ export default function Gallery() {
         <p className="text-xs font-medium uppercase tracking-[0.25em] text-wood">
           Glass n Wood · Gallery
         </p>
+
         <div className="mt-5 grid gap-4">
           <h1 className="whitespace-nowrap font-serif text-3xl leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
             Spaces made to<span className="text-wood"> inspire.</span>
@@ -126,7 +167,7 @@ export default function Gallery() {
           <div className="py-20 text-center">
             <h2 className="font-serif text-2xl">Gallery coming soon</h2>
             <p className="mt-2 text-sm text-charcoal/60">
-              Add gallery images to your projects through the admin panel.
+              Upload images through the admin gallery management page.
             </p>
           </div>
         ) : (
@@ -160,6 +201,7 @@ export default function Gallery() {
           <p className="text-sm text-charcoal/65">
             Looking for a custom glass or mirror design?
           </p>
+
           <Link
             to="/products/glass-mirrors"
             className="mt-4 inline-flex items-center gap-2 bg-charcoal px-5 py-3.5 text-sm text-paper transition-colors hover:bg-wood"

@@ -1,5 +1,10 @@
 
-import { configureStore, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  configureStore,
+  createSlice,
+  createAsyncThunk,
+} from "@reduxjs/toolkit";
+
 import { getProjects } from "../services/projectService.js";
 
 export const loadProjects = createAsyncThunk(
@@ -12,6 +17,14 @@ export const loadProjects = createAsyncThunk(
         error?.message || "Failed to load projects."
       );
     }
+  },
+  {
+    condition: (_, { getState }) => {
+      const { status } = getState().projects;
+
+      // Avoid duplicate requests while loading or after success.
+      return status === "idle" || status === "error";
+    },
   }
 );
 
@@ -36,15 +49,19 @@ const projectsSlice = createSlice({
         state.status = "loading";
         state.error = null;
       })
+
       .addCase(loadProjects.fulfilled, (state, action) => {
         state.status = "ready";
         state.items = action.payload;
         state.error = null;
       })
+
       .addCase(loadProjects.rejected, (state, action) => {
         state.status = "error";
         state.error =
-          action.payload || action.error.message || "Failed to load projects.";
+          action.payload ||
+          action.error.message ||
+          "Failed to load projects.";
       });
   },
 });

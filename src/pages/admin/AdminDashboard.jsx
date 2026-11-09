@@ -405,7 +405,7 @@ async function deleteEnquiry(id) {
               icon={ImageIcon}
               title="Website Gallery"
               description="Review your published visual portfolio and see how your project imagery is presented."
-              link="/gallery"
+              link="/admin/gallery"
               linkLabel="View public gallery"
             />
 

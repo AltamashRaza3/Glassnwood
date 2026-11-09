@@ -3,10 +3,19 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { MotionConfig } from "framer-motion";
+
 import { store } from "./store/index.js";
 import App from "./App.jsx";
+
 import "./index.css";
-createRoot(document.getElementById("root")).render(
+
+const rootElement = document.getElementById("root");
+
+if (!rootElement) {
+  throw new Error('Root element "#root" was not found.');
+}
+
+createRoot(rootElement).render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter

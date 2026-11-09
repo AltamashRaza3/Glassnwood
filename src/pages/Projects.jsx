@@ -39,56 +39,97 @@ function ProjectSkeleton() {
   );
 }
 
+function ProjectError({ error }) {
+  return (
+    <div
+      className="flex flex-col items-start border border-charcoal/10 p-8 md:p-12"
+      role="alert"
+    >
+      <h2 className="font-serif text-2xl">
+        We couldn&apos;t load the projects.
+      </h2>
+
+      <p className="mt-3 max-w-xl text-sm leading-6 text-charcoal/65">
+        Please try again later. If the problem continues, contact us for
+        information about our work.
+      </p>
+
+      {import.meta.env.DEV && error && (
+        <p className="mt-3 break-words text-xs text-ember">
+          Development details:{" "}
+          {typeof error === "string" ? error : error.message || "Unknown error"}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function Projects() {
   useSeo(
-    "Our Projects | Glass n Wood",
+    "Our Projects",
     "Explore Glass n Wood projects featuring custom furniture, glass partitions, woodwork, gyms, offices and showrooms in Siwan and nearby areas.",
   );
 
   const {
     items = [],
-    status,
-    error,
+    status = "idle",
+    error = null,
   } = useSelector((state) => state.projects ?? {});
 
   const [category, setCategory] = useState("All");
   const [projectStatus, setProjectStatus] = useState("All");
 
+  // Only use valid project records returned by the API.
+  const validProjects = useMemo(
+    () =>
+      Array.isArray(items)
+        ? items.filter(
+            (project) =>
+              project &&
+              typeof project.slug === "string" &&
+              typeof project.title === "string",
+          )
+        : [],
+    [items],
+  );
+
+  // Generate categories dynamically from database records.
   const categories = useMemo(
     () => [
       "All",
       ...new Set(
-        items
+        validProjects
           .map((project) => project.category)
-          .filter(Boolean)
+          .filter((value) => typeof value === "string" && value.trim())
           .sort((a, b) => a.localeCompare(b)),
       ),
     ],
-    [items],
+    [validProjects],
   );
 
+  // Filter projects without modifying the Redux data.
   const filteredProjects = useMemo(
     () =>
-      items.filter(
+      validProjects.filter(
         (project) =>
           (category === "All" || project.category === category) &&
           (projectStatus === "All" || project.status === projectStatus),
       ),
-    [items, category, projectStatus],
+    [validProjects, category, projectStatus],
   );
 
   const hasActiveFilters = category !== "All" || projectStatus !== "All";
+
+  const isLoading = status === "loading" || status === "idle";
+  const hasError = status === "error";
 
   function resetFilters() {
     setCategory("All");
     setProjectStatus("All");
   }
 
-  const isLoading = status === "loading" || status === "idle";
-  const hasError = status === "error";
-
   return (
-    <main className="min-h-screen pb-20">
+    <div className="min-h-screen pb-20">
       {/* Page heading */}
       <section className="wrap pt-8 md:pt-12">
         <div className="max-w-5xl">
@@ -124,6 +165,7 @@ export default function Projects() {
       <section className="wrap mt-7 md:mt-7" aria-label="Project filters">
         <div className="border-y border-charcoal/10 py-5">
           <div className="flex flex-col gap-5">
+            {/* Category filters */}
             <div>
               <p className="mb-3 text-xs font-medium uppercase tracking-[0.18em] text-charcoal/55">
                 Project type
@@ -146,6 +188,7 @@ export default function Projects() {
               </div>
             </div>
 
+            {/* Status filters */}
             <div>
               <p className="mb-3 text-xs font-medium uppercase tracking-[0.18em] text-charcoal/55">
                 Project status
@@ -168,6 +211,7 @@ export default function Projects() {
               </div>
             </div>
 
+            {/* Clear filters */}
             {hasActiveFilters && (
               <div>
                 <button
@@ -203,28 +247,7 @@ export default function Projects() {
             </div>
           </>
         ) : hasError ? (
-          <div
-            className="flex flex-col items-start border border-charcoal/10 p-8 md:p-12"
-            role="alert"
-          >
-            <h2 className="font-serif text-2xl">
-              We couldn&apos;t load the projects.
-            </h2>
-
-            <p className="mt-3 max-w-xl text-sm leading-6 text-charcoal/65">
-              Please try again later. If the problem continues, contact us for
-              information about our work.
-            </p>
-
-            {import.meta.env.DEV && error && (
-              <p className="mt-3 break-words text-xs text-ember">
-                Development details:{" "}
-                {typeof error === "string"
-                  ? error
-                  : error.message || "Unknown error"}
-              </p>
-            )}
-          </div>
+          <ProjectError error={error} />
         ) : filteredProjects.length === 0 ? (
           <div className="flex flex-col items-center px-5 py-16 text-center md:py-24">
             <BriefcaseBusiness
@@ -235,18 +258,18 @@ export default function Projects() {
             />
 
             <h2 className="mt-5 font-serif text-2xl">
-              {items.length === 0
+              {validProjects.length === 0
                 ? "Our portfolio is being updated."
                 : "No matching projects."}
             </h2>
 
             <p className="mt-3 max-w-md text-sm leading-6 text-charcoal/65">
-              {items.length === 0
+              {validProjects.length === 0
                 ? "Get in touch to discuss your requirements and learn more about our work."
                 : "Try a different category or status to explore more projects."}
             </p>
 
-            {items.length > 0 && hasActiveFilters && (
+            {validProjects.length > 0 && hasActiveFilters && (
               <button
                 type="button"
                 onClick={resetFilters}
@@ -257,7 +280,7 @@ export default function Projects() {
               </button>
             )}
 
-            {items.length === 0 && (
+            {validProjects.length === 0 && (
               <Link
                 to="/contact"
                 className="mt-5 inline-flex items-center gap-2 bg-charcoal px-5 py-3 text-sm text-paper transition-colors hover:bg-cyan-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2"
@@ -291,6 +314,6 @@ export default function Projects() {
           </>
         )}
       </section>
-    </main>
+    </div>
   );
 }
